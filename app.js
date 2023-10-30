@@ -7,7 +7,9 @@ const cookieParser = require('cookie-parser')
 const mongoSanitize = require('express-mongo-sanitize')
 const globalErrorHandler = require('./utils/errorHandler')
 const AppError = require('./utils/appErrorClass')
+const authRouter = require('./routers/authRoutes')
 const initRouter = require('./routers/initRoutes')
+const managersRouter = require('./routers/managersRoutes')
 
 // const hpp = require('hpp');
 
@@ -61,7 +63,9 @@ app.use((req, res, next) => {
 
 // 3 ROUTES
 
-app.use('/api/v1/', initRouter)
+app.use('/api/v1/', authRouter)
+app.use('/api/v1/users', initRouter)
+app.use('/api/v1/managers', managersRouter)
 
 app.all('*', (req, res, next) => {
     next(

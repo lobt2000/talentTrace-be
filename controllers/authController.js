@@ -26,10 +26,9 @@ const createAndSendToken = (user, statusCode, res) => {
 
     res.status(statusCode).json({
         status: 'success',
-        token: token,
-        data: {
-            user: user,
-        },
+        access_token: token,
+        expires_at: cookieObj.expires,
+        token_type: 'Bearer',
     })
 }
 
@@ -96,7 +95,7 @@ exports.login = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
     let token
     const authHeaders = req.headers.authorization
-    if (authHeaders && authHeaders.startWith('Bearer')) {
+    if (authHeaders && authHeaders.includes('Bearer')) {
         token = authHeaders.split(' ')[1]
     }
 
@@ -115,8 +114,9 @@ exports.protect = catchAsync(async (req, res, next) => {
     )
 
     const user = await User.findById(decodedToken.id)
-
-    if (!user) {
+    const company = await Company.findById(decodedToken.id)
+    const generalUser = user || company
+    if (!generalUser) {
         return next(
             new AppError(
                 'The user belonging to the token is no exist anymore',
@@ -124,7 +124,7 @@ exports.protect = catchAsync(async (req, res, next) => {
             )
         )
     }
-    req.user = user
+    req.user = generalUser
     next()
 })
 
