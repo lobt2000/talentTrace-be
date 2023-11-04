@@ -2,6 +2,7 @@
 const mongooses = require('mongoose')
 const validators = require('validator')
 const bcrypt = require('bcryptjs')
+const notifficationConst = require('../constants/notiffications.contant')
 
 const companySchema = new mongooses.Schema({
     firstName: {
@@ -36,9 +37,32 @@ const companySchema = new mongooses.Schema({
     passwordChangeDate: Date,
     role: {
         type: String,
-        enum: ['company', 'user'],
-        default: 'user',
+        default: 'company',
     },
+    notiffications: [
+        {
+            type: {
+                type: Object,
+            },
+            from: String,
+            notifyType: {
+                type: String,
+                enum: notifficationConst.notifyType,
+                default: notifficationConst.notifyType[0],
+            },
+            notifyText: {
+                type: String,
+                enum: notifficationConst.notifyText,
+                default: notifficationConst.notifyText.acceptionRequest,
+            },
+            active: {
+                type: Boolean,
+                default: true,
+            },
+            date: Date,
+            managerId: String,
+        },
+    ],
 })
 
 companySchema.pre('save', async function (next) {

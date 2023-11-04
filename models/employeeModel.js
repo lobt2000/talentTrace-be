@@ -1,7 +1,6 @@
 // const crypto = require('crypto');
 const mongooses = require('mongoose')
 const validators = require('validator')
-const bcrypt = require('bcryptjs')
 
 const userSchema = new mongooses.Schema({
     firstName: {
@@ -71,32 +70,11 @@ const userSchema = new mongooses.Schema({
         id: Number,
         name: String,
     },
-    password: {
-        type: String,
-        required: [true, 'Please provide us your password'],
-        minLength: 8,
-        select: false,
-    },
-    confirmPassword: {
-        type: String,
-        required: [true, 'Please confirm your password'],
-        validate: {
-            validator: function (el) {
-                return el === this.password
-            },
-            message: 'Passwords are not the same',
-        },
-    },
     companyEmail: {
         type: String,
         require: [true, 'Please provide email'],
         lowercase: true,
         validate: [validators.isEmail, 'Invalid Email'],
-    },
-    passwordChangeDate: Date,
-    role: {
-        type: String,
-        default: 'manager',
     },
     name: String,
     fullPosition: String,
@@ -112,50 +90,12 @@ userSchema.pre('save', function (next) {
     next()
 })
 
-userSchema.pre('save', async function (next) {
-    // Only run this function if pass was modified
-    if (!this.isModified('password')) return next()
-
-    // has the pass
-    this.password = await bcrypt.hash(this.password, 12)
-
-    this.confirmPassword = undefined
-    next()
-})
-
 userSchema.pre(/^find/, async function (next) {
     this.find({ active: { $ne: false } })
 
     next()
 })
 
-userSchema.pre('save', async function (next) {
-    if (!this.isModified('password') || this.isNew) return next()
+const Employee = mongooses.model('Employee', userSchema)
 
-    this.passwordChangedAt = Date.now() - 1000
-
-    next()
-})
-
-userSchema.methods.correctPassword = async function (
-    possibleUserPassword,
-    userPassword
-) {
-    return await bcrypt.compare(possibleUserPassword, userPassword)
-}
-
-userSchema.methods.chengedPasswordAfter = function (JWTTimestamp) {
-    if (this.passwordChangedAt) {
-        const changedTimestamp = parseInt(
-            this.passwordChangedAt.getTime() / 1000,
-            10
-        )
-        return JWTTimestamp < changedTimestamp
-    }
-
-    return false
-}
-
-const User = mongooses.model('User', userSchema)
-
-module.exports = User
+module.exports = Employee

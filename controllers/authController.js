@@ -4,6 +4,7 @@ const AppError = require('../utils/appErrorClass')
 const catchAsync = require('../utils/catchAsync')
 const User = require('../models/userModel')
 const Company = require('../models/companyModel')
+const notifficationConst = require('../constants/notiffications.contant')
 
 const signToken = (id) =>
     jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -39,23 +40,76 @@ exports.signUpCompany = catchAsync(async (req, res, next) => {
         password: req.body.password,
         confirmPassword: req.body.confirmPassword,
         passwordChangedAt: req.body.passwordChangedAt,
-        role: 'company',
     })
 
     createAndSendToken(newUser, 201, res)
 })
 
 // eslint-disable-next-line no-unused-vars
-exports.signUpUser = catchAsync(async (req, res, next) => {
+exports.signUpManager = catchAsync(async (req, res, next) => {
     const newUser = await User.create({
-        name: req.body.name,
         email: req.body.email,
+        companyEmail: req.body.companyEmail,
         password: req.body.password,
         confirmPassword: req.body.confirmPassword,
         passwordChangedAt: req.body.passwordChangedAt,
+        firstName: 'Please change me',
+        surName: 'Please change me',
+        workEmail: req.body.email,
+        status: {
+            id: 1,
+            name: 'Pending',
+        },
     })
 
-    createAndSendToken(newUser, 201, res)
+    const companyUser = await Company.findOne({ email: req.body.companyEmail })
+
+    if (!companyUser) {
+        return next(
+            new AppError(
+                'Company user not found, please provide correct email',
+                404
+            )
+        )
+    }
+
+    const notiffication = companyUser.notiffications.find(
+        (el) =>
+            el.from === newUser.email &&
+            el.notifyType === notifficationConst.notifyType[0] &&
+            el.active === true
+    )
+
+    if (notiffication) {
+        return next(
+            new AppError(
+                'You have already send request, please wait reply',
+                404
+            )
+        )
+    }
+
+    companyUser.notiffications.push({
+        from: newUser.email,
+        notifyType: notifficationConst.notifyType[0],
+        notifyText: notifficationConst.notifyText.acceptionRequest,
+        active: true,
+        date: new Date().toLocaleString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        }),
+        managerId: newUser._id,
+    })
+
+    await companyUser.save({ validateBeforeSave: false })
+
+    res.status(201).json({
+        status: 'success',
+        data: {
+            newUser,
+        },
+    })
 })
 
 exports.loginByCompany = catchAsync(async (req, res, next) => {
@@ -124,6 +178,7 @@ exports.protect = catchAsync(async (req, res, next) => {
             )
         )
     }
+
     req.user = generalUser
     next()
 })
@@ -141,3 +196,17 @@ exports.restrictTo =
         }
         next()
     }
+
+exports.updateManagerPassword = catchAsync(async (req, res, next) => {
+    const user = await User.findById(req.body.id).select('+password')
+
+    if (!user) {
+        return next(new AppError('User not found', 401))
+    }
+
+    user.password = req.body.password
+    user.confirmPassword = req.body.confirmPassword
+
+    await user.save()
+    createAndSendToken(user, 200, res)
+})

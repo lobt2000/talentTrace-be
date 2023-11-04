@@ -1,7 +1,7 @@
 const express = require('express')
 const { default: helmet } = require('helmet')
 // const path = require('path');
-const rateLinit = require('express-rate-limit')
+// const rateLinit = require('express-rate-limit')
 const xss = require('xss-clean')
 const cookieParser = require('cookie-parser')
 const mongoSanitize = require('express-mongo-sanitize')
@@ -10,6 +10,7 @@ const AppError = require('./utils/appErrorClass')
 const authRouter = require('./routers/authRoutes')
 const initRouter = require('./routers/initRoutes')
 const managersRouter = require('./routers/managersRoutes')
+const companyRoutes = require('./routers/companyRoutes')
 
 // const hpp = require('hpp');
 
@@ -23,13 +24,13 @@ app.use(helmet())
 // }
 
 // limit request from same abi
-const limiter = rateLinit({
-    max: 100,
-    windowMs: 60 * 60 * 1000,
-    message: 'Too many request from this IP, please try again in an hour',
-})
+// const limiter = rateLinit({
+//     max: 100,
+//     windowMs: 60 * 60 * 1000,
+//     message: 'Too many request from this IP, please try again in an hour',
+// })
 
-app.use('/api', limiter)
+// app.use('/api', limiter)
 
 // Readinfg data from a body to req.body
 app.use(
@@ -66,6 +67,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/', authRouter)
 app.use('/api/v1/users', initRouter)
 app.use('/api/v1/managers', managersRouter)
+app.use('/api/v1/company', companyRoutes)
 
 app.all('*', (req, res, next) => {
     next(
