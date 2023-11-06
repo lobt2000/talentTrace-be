@@ -2,7 +2,7 @@
 const mongooses = require('mongoose')
 const validators = require('validator')
 
-const userSchema = new mongooses.Schema({
+const employeeSchema = new mongooses.Schema({
     firstName: {
         type: String,
         required: [true, 'Please provide name'],
@@ -82,7 +82,7 @@ const userSchema = new mongooses.Schema({
     icon: String,
 })
 
-userSchema.pre('save', function (next) {
+employeeSchema.pre('save', function (next) {
     this.name = this.firstName + ' ' + this.surName
     this.fullPosition = this.level.name + ' ' + this.position.name
     this.id = this._id
@@ -90,12 +90,12 @@ userSchema.pre('save', function (next) {
     next()
 })
 
-userSchema.pre(/^find/, async function (next) {
+employeeSchema.pre(/^find/, async function (next) {
     this.find({ active: { $ne: false } })
 
     next()
 })
 
-const Employee = mongooses.model('Employee', userSchema)
+const Employee = mongooses.model('Employee', employeeSchema)
 
 module.exports = Employee

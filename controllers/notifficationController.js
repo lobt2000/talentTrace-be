@@ -1,5 +1,6 @@
 const Company = require('../models/companyModel')
 const catchAsync = require('../utils/catchAsync')
+const factory = require('../utils/handlerFactory')
 
 // eslint-disable-next-line no-unused-vars
 exports.getCompanyNotiffications = catchAsync(async (req, res, next) => {
@@ -22,12 +23,7 @@ exports.getCompanyNotiffications = catchAsync(async (req, res, next) => {
         }
     })
 
-    res.status(200).json({
-        status: 'success',
-        data: {
-            notiffications: groupNotifficationsByDate,
-        },
-    })
+    factory.sendRequest(res, groupNotifficationsByDate, 200)
 })
 
 // eslint-disable-next-line no-unused-vars
@@ -45,6 +41,8 @@ exports.declineNotiffication = catchAsync(async (req, res, next) => {
         status: 'success',
         data: null,
     })
+
+    factory.sendRequest(res, null, 204)
 })
 
 const getDateTime = (time) => {

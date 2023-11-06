@@ -11,6 +11,7 @@ const authRouter = require('./routers/authRoutes')
 const initRouter = require('./routers/initRoutes')
 const managersRouter = require('./routers/managersRoutes')
 const companyRoutes = require('./routers/companyRoutes')
+const employeesRoutes = require('./routers/employeesRoutes')
 
 // const hpp = require('hpp');
 
@@ -68,6 +69,7 @@ app.use('/api/v1/', authRouter)
 app.use('/api/v1/users', initRouter)
 app.use('/api/v1/managers', managersRouter)
 app.use('/api/v1/company', companyRoutes)
+app.use('/api/v1/employees', employeesRoutes)
 
 app.all('*', (req, res, next) => {
     next(

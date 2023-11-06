@@ -2,6 +2,7 @@ const { promisify } = require('util')
 const jwt = require('jsonwebtoken')
 const AppError = require('../utils/appErrorClass')
 const catchAsync = require('../utils/catchAsync')
+const factory = require('../utils/handlerFactory')
 const User = require('../models/userModel')
 const Company = require('../models/companyModel')
 const notifficationConst = require('../constants/notiffications.contant')
@@ -104,12 +105,7 @@ exports.signUpManager = catchAsync(async (req, res, next) => {
 
     await companyUser.save({ validateBeforeSave: false })
 
-    res.status(201).json({
-        status: 'success',
-        data: {
-            newUser,
-        },
-    })
+    factory.sendRequest(res, newUser, 201)
 })
 
 exports.loginByCompany = catchAsync(async (req, res, next) => {

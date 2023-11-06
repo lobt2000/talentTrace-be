@@ -1,14 +1,11 @@
-// const Company = require('../models/companyModel')
 const User = require('../models/userModel')
 const AppError = require('../utils/appErrorClass')
 const catchAsync = require('../utils/catchAsync')
+const factory = require('../utils/handlerFactory')
 
 // eslint-disable-next-line no-unused-vars
 exports.getInitUserInfo = catchAsync(async (req, res, next) => {
-    res.status(200).json({
-        status: 'success',
-        user: req.user,
-    })
+    factory.sendRequest(res, req.user, 200)
 })
 
 // eslint-disable-next-line no-unused-vars
@@ -16,22 +13,11 @@ exports.getAllManagers = catchAsync(async (req, res, next) => {
     const managers = (await User.find({})).filter(
         (el) => el.status?.name !== 'Pending'
     )
-    res.status(200).json({
-        status: 'success',
-        managers: managers,
-    })
+    factory.sendRequest(res, managers, 200)
 })
 
 // eslint-disable-next-line no-unused-vars
-exports.getManagerById = catchAsync(async (req, res, next) => {
-    const user = await User.findById(req.params.id)
-    res.status(200).json({
-        status: 'success',
-        data: {
-            user,
-        },
-    })
-})
+exports.getManagerById = factory.getOne(User)
 
 // eslint-disable-next-line no-unused-vars
 exports.createManager = catchAsync(async (req, res, next) => {
@@ -45,24 +31,10 @@ exports.createManager = catchAsync(async (req, res, next) => {
 
     delete newManager.password
 
-    res.status(201).json({
-        status: 'success',
-        data: {
-            id: newManager.id,
-        },
-    })
+    factory.sendRequest(res, { id: newManager.id }, 201)
 })
 
-exports.deleteManager = catchAsync(async (req, res, next) => {
-    const user = await User.findByIdAndDelete(req.params.id)
-    if (!user) {
-        return next(new AppError('No document found with that ID', 404))
-    }
-    res.status(204).json({
-        status: 'success',
-        data: null,
-    })
-})
+exports.deleteManager = factory.deleteOne(User)
 
 exports.updateManager = catchAsync(async (req, res, next) => {
     const body = {
@@ -78,10 +50,6 @@ exports.updateManager = catchAsync(async (req, res, next) => {
     if (!user) {
         return next(new AppError('No document found with that ID', 404))
     }
-    res.status(200).json({
-        status: 'success',
-        data: {
-            id: user.id,
-        },
-    })
+
+    factory.sendRequest(res, { id: user.id }, 200)
 })
