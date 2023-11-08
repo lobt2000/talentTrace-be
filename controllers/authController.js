@@ -139,6 +139,9 @@ exports.login = catchAsync(async (req, res, next) => {
         return next(new AppError('Incorrect email or password', 401))
     }
 
+    if (user.companyEmail !== req.body.companyEmail) {
+        return next(new AppError('Incorrect compamy email', 401))
+    }
     createAndSendToken(user, 200, res)
 })
 

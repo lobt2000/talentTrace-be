@@ -10,8 +10,9 @@ const AppError = require('./utils/appErrorClass')
 const authRouter = require('./routers/authRoutes')
 const initRouter = require('./routers/initRoutes')
 const managersRouter = require('./routers/managersRoutes')
-const companyRoutes = require('./routers/companyRoutes')
-const employeesRoutes = require('./routers/employeesRoutes')
+const companyRouter = require('./routers/companyRoutes')
+const employeesRouter = require('./routers/employeesRoutes')
+const vacanciesRouter = require('./routers/vacanciesRoutes')
 
 // const hpp = require('hpp');
 
@@ -68,8 +69,9 @@ app.use((req, res, next) => {
 app.use('/api/v1/', authRouter)
 app.use('/api/v1/users', initRouter)
 app.use('/api/v1/managers', managersRouter)
-app.use('/api/v1/company', companyRoutes)
-app.use('/api/v1/employees', employeesRoutes)
+app.use('/api/v1/company', companyRouter)
+app.use('/api/v1/employees', employeesRouter)
+app.use('/api/v1/vacancies', vacanciesRouter)
 
 app.all('*', (req, res, next) => {
     next(

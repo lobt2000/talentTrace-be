@@ -102,6 +102,11 @@ const userSchema = new mongooses.Schema({
     fullPosition: String,
     id: String,
     icon: String,
+    specialization: {
+        type: String,
+        default: 'manager',
+        enum: ['all', 'manager', 'tech', 'soft', 'english'],
+    },
 })
 
 userSchema.pre('save', function (next) {
