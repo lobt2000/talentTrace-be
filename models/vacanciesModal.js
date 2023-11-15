@@ -41,7 +41,7 @@ const vacancySchema = new mongoose.Schema({
         type: String,
         require: [true, 'Please provide description'],
     },
-    aсtive: {
+    active: {
         type: Boolean,
         default: true,
     },
@@ -57,9 +57,12 @@ const vacancySchema = new mongoose.Schema({
         },
     ],
     id: String,
-    // candidates: [{
-
-    // }]
+    candidates: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Candidates',
+        },
+    ],
     bgIcon: String,
 })
 

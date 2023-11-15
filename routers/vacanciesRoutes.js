@@ -14,5 +14,8 @@ router
     .delete(protect, vacancyController.deleteVacancy)
 
 router.route('/:id/hiring_team').patch(protect, vacancyController.updateVacancy)
+router
+    .route('/:id/candidates')
+    .get(protect, vacancyController.getAllVacancyCandidates)
 
 module.exports = router

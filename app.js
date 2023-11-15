@@ -13,6 +13,8 @@ const managersRouter = require('./routers/managersRoutes')
 const companyRouter = require('./routers/companyRoutes')
 const employeesRouter = require('./routers/employeesRoutes')
 const vacanciesRouter = require('./routers/vacanciesRoutes')
+const optionsRouter = require('./routers/optionsRoutes')
+const candidateRouter = require('./routers/candidatesRoutes')
 
 // const hpp = require('hpp');
 
@@ -37,7 +39,7 @@ app.use(helmet())
 // Readinfg data from a body to req.body
 app.use(
     express.json({
-        limit: '10kb',
+        limit: '100mb',
     })
 )
 
@@ -72,6 +74,8 @@ app.use('/api/v1/managers', managersRouter)
 app.use('/api/v1/company', companyRouter)
 app.use('/api/v1/employees', employeesRouter)
 app.use('/api/v1/vacancies', vacanciesRouter)
+app.use('/api/v1/options', optionsRouter)
+app.use('/api/v1/candidates', candidateRouter)
 
 app.all('*', (req, res, next) => {
     next(
