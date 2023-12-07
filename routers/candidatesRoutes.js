@@ -11,12 +11,17 @@ const upload = multer({
 const router = express.Router()
 
 router.get('/', protect, candidateController.getAllCandidates)
+router.patch('/', protect, candidateController.updateAllCandidates)
 router.post('/', upload.any(), candidateController.createCandidate)
 
 router
     .route('/:id')
     .get(protect, candidateController.getCandidateById)
-    .patch(upload.any(), candidateController.updateCandidate)
+    .patch(
+        upload.any(),
+        candidateController.restrictToManager,
+        candidateController.updateCandidate
+    )
     .delete(protect, candidateController.deleteCandidate)
 
 module.exports = router

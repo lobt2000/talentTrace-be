@@ -22,8 +22,13 @@ exports.getCompanyNotiffications = catchAsync(async (req, res, next) => {
             })
         }
     })
-
-    factory.sendRequest(res, groupNotifficationsByDate, 200)
+    factory.sendRequest(
+        res,
+        groupNotifficationsByDate.sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        ),
+        200
+    )
 })
 
 // eslint-disable-next-line no-unused-vars

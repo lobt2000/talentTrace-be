@@ -63,7 +63,9 @@ const vacancySchema = new mongoose.Schema({
             ref: 'Candidates',
         },
     ],
-    bgIcon: String,
+    bgIcon: {
+        data: String,
+    },
 })
 
 vacancySchema.pre('save', function (next) {

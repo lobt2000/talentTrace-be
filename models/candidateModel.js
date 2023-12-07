@@ -32,6 +32,12 @@ const candidatesSchema = new mongoose.Schema({
         type: Object,
         require: [true, 'Please provide a type of the stage'],
     },
+    vacanciesIds: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Vacancy',
+        },
+    ],
     stages: [
         {
             type: {
@@ -40,6 +46,7 @@ const candidatesSchema = new mongoose.Schema({
             name: String,
             id: String,
             file: Object,
+            vacancyId: String,
             scores: [
                 {
                     id: {

@@ -13,7 +13,10 @@ router
     .patch(protect, vacancyController.updateVacancy)
     .delete(protect, vacancyController.deleteVacancy)
 
-router.route('/:id/hiring_team').patch(protect, vacancyController.updateVacancy)
+router
+    .route('/:id/hiring_team')
+    .patch(protect, vacancyController.updateVacancy)
+    .get(protect, vacancyController.getHiringTeam)
 router
     .route('/:id/candidates')
     .get(protect, vacancyController.getAllVacancyCandidates)

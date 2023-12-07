@@ -78,6 +78,7 @@ exports.getOne = (Model, popOptions) =>
 //     })
 
 exports.sendRequest = (res, data, statusCode) => {
+    // res.setHeader('content-encoding', 'gzip')
     res.status(statusCode).json({
         status: 'success',
         data,

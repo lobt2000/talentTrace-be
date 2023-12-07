@@ -80,6 +80,20 @@ const employeeSchema = new mongooses.Schema({
     fullPosition: String,
     id: String,
     icon: String,
+    managers_team: [
+        {
+            type: mongooses.Schema.ObjectId,
+            ref: 'User',
+            required: [true, 'Vacancy must contain a manager'],
+        },
+    ],
+
+    perfomances: [
+        {
+            type: mongooses.Schema.ObjectId,
+            ref: 'Perfomance',
+        },
+    ],
 })
 
 employeeSchema.pre('save', function (next) {

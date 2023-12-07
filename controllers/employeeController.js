@@ -13,7 +13,14 @@ exports.getAllEmployees = catchAsync(async (req, res, next) => {
 })
 
 // eslint-disable-next-line no-unused-vars
-exports.getEmployeeById = factory.getOne(Employee)
+exports.getEmployeeById = factory.getOne(Employee, {
+    path: 'managers_team',
+    select: {
+        name: 1,
+        id: 1,
+        fullPosition: 1,
+    },
+})
 
 // eslint-disable-next-line no-unused-vars
 exports.createEmployee = catchAsync(async (req, res, next) => {
@@ -21,6 +28,7 @@ exports.createEmployee = catchAsync(async (req, res, next) => {
         ...req.body,
         email: req.body.workEmail,
         companyEmail: req.user.email,
+        managers_team: [req.user.id],
     })
 
     factory.sendRequest(res, { id: newEmployee.id }, 201)
@@ -31,8 +39,12 @@ exports.deleteEmployee = factory.deleteOne(Employee)
 exports.updateEmployee = catchAsync(async (req, res, next) => {
     const body = {
         ...req.body,
-        name: req.body.firstName + ' ' + req.body.surName,
-        fullPosition: req.body.level.name + ' ' + req.body.position.name,
+        ...(req.body.firstName && {
+            name: req.body.firstName + ' ' + req.body.surName,
+        }),
+        ...(req.body.level && {
+            fullPosition: req.body.level.name + ' ' + req.body.position.name,
+        }),
     }
     const employee = await Employee.findByIdAndUpdate(req.params.id, body, {
         new: true,
